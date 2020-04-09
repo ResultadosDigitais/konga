@@ -25,19 +25,21 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: 1337
+              containerPort: {{ .Values.config.port }}
               protocol: TCP
           livenessProbe:
             httpGet:
               path: /
               port: http
+            initialDelaySeconds: 60
           readinessProbe:
             httpGet:
               path: /
               port: http
+            initialDelaySeconds: 60
           envFrom:
             - configMapRef:
-                name: {{ include "konga.fullname" . }}-config
+                name: konga-config
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
