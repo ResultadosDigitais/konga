@@ -19,6 +19,13 @@ spec:
         app.kubernetes.io/name: {{ include "konga.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
+      initContainers:
+        - name: db-migration
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          command: ["node", "./bin/konga.js", "prepare", "--adapter postgres", "--uri $(DB_URI)"]
+          envFrom:
+            - configMapRef:
+                name: konga-config
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
